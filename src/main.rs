@@ -67,7 +67,7 @@ async fn run() -> Result<()> {
             client.connect().await;
 
             let config = Config::builder().max_history_size(2000)?.build();
-            let history = FileHistory::with_config(config);
+            let history = FileHistory::with_config(&config);
             let rl: &mut Editor<(), FileHistory> = &mut Editor::with_history(config, history)?;
 
             // Load history

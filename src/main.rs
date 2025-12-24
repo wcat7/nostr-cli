@@ -114,11 +114,27 @@ async fn run() -> Result<()> {
 
             Ok(())
         }
-        Command::Serve { port } => {
+        Command::Serve {
+            port,
+            max_reqs,
+            notes_per_minute,
+        } => {
             let mut builder = RelayBuilder::default();
 
             if let Some(port) = port {
                 builder = builder.port(port);
+            }
+
+            // Configure rate limit if specified
+            if max_reqs.is_some() || notes_per_minute.is_some() {
+                let mut rate_limit = RateLimit::default();
+                if let Some(max_reqs) = max_reqs {
+                    rate_limit.max_reqs = max_reqs;
+                }
+                if let Some(notes_per_minute) = notes_per_minute {
+                    rate_limit.notes_per_minute = notes_per_minute;
+                }
+                builder = builder.rate_limit(rate_limit);
             }
 
             let relay = LocalRelay::new(builder);
